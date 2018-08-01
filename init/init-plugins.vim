@@ -97,6 +97,9 @@ if index(g:bundle_group, 'basic') >= 0
 	" 一次性安装一大堆 colorscheme
 	Plug 'flazz/vim-colorschemes'
 
+	"" 我喜欢的主题
+	Plug 'morhetz/gruvbox'
+	
 	" 支持库，给其他插件用的函数库
 	Plug 'xolox/vim-misc'
 
@@ -115,6 +118,17 @@ if index(g:bundle_group, 'basic') >= 0
 
 	" 提供基于 TAGS 的定义预览，函数参数预览，quickfix 预览
 	Plug 'skywind3000/vim-preview'
+
+	noremap <m-;> :PreviewTag <cr>
+	noremap <m-'> :PreviewClose <cr>
+	noremap <m-u> :PreviewScroll -1<cr>
+	noremap <m-d> :PreviewScroll +1<cr>
+	inoremap <m-u> <c-\><c-o>:PreviewScroll -1<cr>
+	inoremap <m-d> <c-\><c-o>:PreviewScroll +1<cr>
+	noremap <m-q> :PreviewSignature!<cr>
+	inoremap <m-q> <c-\><c-o>:PreviewSignature!<cr>
+	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
 	" Git 支持
 	Plug 'tpope/vim-fugitive'
@@ -163,6 +177,18 @@ if index(g:bundle_group, 'enhanced') >= 0
 
 	" 使用 :CtrlSF 命令进行模仿 sublime 的 grep
 	Plug 'dyng/ctrlsf.vim'
+	" 一些命令
+	nmap     <C-F>f <Plug>CtrlSFPrompt
+	vmap     <C-F>f <Plug>CtrlSFVwordPath
+	vmap     <C-F>F <Plug>CtrlSFVwordExec
+	nmap     <C-F>n <Plug>CtrlSFCwordPath
+	nmap     <C-F>p <Plug>CtrlSFPwordPath
+	nnoremap <C-F>o :CtrlSFOpen<CR>
+	nnoremap <C-F>t :CtrlSFToggle<CR>
+	inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
+
+	" 异步Grepper
+	Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
 
 	" 配对括号和引号自动补全
 	Plug 'Raimondi/delimitMate'
@@ -191,7 +217,7 @@ if index(g:bundle_group, 'tags') >= 0
 	Plug 'skywind3000/gutentags_plus'
 
 	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
-	let g:gutentags_project_root = ['.root']
+	let g:gutentags_project_root = ['.root', 'idea']
 	let g:gutentags_ctags_tagfile = '.tags'
 
 	" 默认生成的数据文件集中到 ~/.cache/tags 避免污染项目目录，好清理
@@ -217,7 +243,7 @@ if index(g:bundle_group, 'tags') >= 0
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
 	" 使用 universal-ctags 的话需要下面这行，请反注释
-	" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+	let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 
 	" 禁止 gutentags 自动链接 gtags 数据库
 	let g:gutentags_auto_add_gtags_cscope = 0
@@ -312,6 +338,7 @@ if index(g:bundle_group, 'nerdtree') >= 0
 	let g:NERDTreeDirArrows = 1
 	let g:NERDTreeHijackNetrw = 0
 	noremap <space>nn :NERDTree<cr>
+	noremap <space>nn :NERDTreeFind<cr>
 	noremap <space>no :NERDTreeFocus<cr>
 	noremap <space>nm :NERDTreeMirror<cr>
 	noremap <space>nt :NERDTreeToggle<cr>
@@ -363,7 +390,7 @@ if index(g:bundle_group, 'ale') >= 0
 	" 编辑不同文件类型需要的语法检查器
 	let g:ale_linters = {
 				\ 'c': ['gcc', 'cppcheck'], 
-				\ 'cpp': ['gcc', 'cppcheck'], 
+				\ 'cpp': ['gcc', 'cppcheck', 'yapf'], 
 				\ 'python': ['flake8', 'pylint'], 
 				\ 'lua': ['luac'], 
 				\ 'go': ['go build', 'gofmt'],
@@ -426,8 +453,8 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" ALT+n 打开 buffer 模糊匹配
 		let g:Lf_ShortcutB = '<m-n>'
 
-		" CTRL+n 打开最近使用的文件 MRU，进行模糊匹配
-		noremap <c-n> :LeaderfMru<cr>
+		" CTRL+m 打开最近使用的文件 MRU，进行模糊匹配
+		noremap <c-m> :LeaderfMru<cr>
 
 		" ALT+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
 		noremap <m-p> :LeaderfFunction!<cr>
@@ -486,6 +513,18 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
 
+		" Multiple cursor
+		Plug 'terryma/vim-multiple-cursors'
+		" vim-multiple-cursors Setup {{{
+		function! Multiple_cursors_before()
+			call youcompleteme#DisableCursorMovedAutocommands()
+		endfunction
+
+		function! Multiple_cursors_after()
+			call youcompleteme#EnableCursorMovedAutocommands()
+		endfunction
+		" }}}
+
 		" 显示函数列表的扩展插件
 		Plug 'tacahiroy/ctrlp-funky'
 
@@ -506,8 +545,8 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" CTRL+p 打开文件模糊匹配
 		noremap <c-p> :CtrlP<cr>
 
-		" CTRL+n 打开最近访问过的文件的匹配
-		noremap <c-n> :CtrlPMRUFiles<cr>
+		" CTRL+m 打开最近访问过的文件的匹配
+		noremap <c-m> :CtrlPMRUFiles<cr>
 
 		" ALT+p 显示当前文件的函数列表
 		noremap <m-p> :CtrlPFunky<cr>
@@ -516,6 +555,94 @@ if index(g:bundle_group, 'leaderf') >= 0
 		noremap <m-n> :CtrlPBuffer<cr>
 	endif
 endif
+
+" 安装YCM
+Plug 'Valloric/YouCompleteMe'
+
+" Python相关
+Plug 'sillybun/vim-autodoc'
+Plug 'sillybun/vim-repl'
+
+" Vasp相关
+Plug 'alejandrogallo/vasp.vim'
+
+" 源文件头文件跳转
+Plug 'ericcurtin/CurtineIncSw.vim'
+
+" 更好地搜索功能 incsearch.vim
+Plug 'haya14busa/incsearch.vim'
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+"------------------------------------------------------
+
+" 进入QuickFix选择
+Plug 'yssl/QFEnter'
+"QFENTER
+let g:qfenter_keymap = {}
+let g:qfenter_keymap.vopen = ['<C-v>']
+let g:qfenter_keymap.hopen = ['<C-CR>', '<C-s>', '<C-x>']
+let g:qfenter_keymap.topen = ['<C-t>']
+"------------------------------------------------------------------
+
+" 注释插件
+Plug 'tpope/vim-commentary'
+
+"----------------------------------------------------------------------
+" vim tex写作
+"----------------------------------------------------------------------
+Plug 'lervag/vimtex'
+"Fold, integrate with fastfold plugin
+let g:vimtex_fold_enabled = 1
+let g:vimtex_quickfix_enabled = 0
+let g:vimtex_view_method = 'skim'
+"********************************************************
+"注意！！！！！！！！！！！
+"这里设置了没有用，要在~/.latexmkrc 里面设置才有用
+"经验!!!!!!!!!!!!!!!!!!!!!!
+"因此可以用<leader>ll 来操作，自动刷新latex编译
+let g:vimtex_latexmk_options = '-pdf -pdflatex="xelatex --shell-escape %O %S " -verbose -file-line-error -synctex=1 -interaction=nonstopmode'
+
+
+
+"----------------------------------------------------------------------
+" 重复vim的动作
+"----------------------------------------------------------------------
+Plug 'tpope/vim-repeat'
+
+"----------------------------------------------------------------------
+" vimtex 折叠很方便
+" "----------------------------------------------------------------------
+Plug 'Konfekt/FastFold'
+
+"----------------------------------------------------------------------
+" 补全函数的所有内容
+"----------------------------------------------------------------------
+Plug 'tenfyzhong/CompleteParameter.vim'
+inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+"Goto next parameter and select it.
+nmap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+"Goto previous parameter and select it.
+nmap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+"Select next overload function.
+nmap <m-d> <Plug>(complete_parameter#overload_down)
+imap <m-d> <Plug>(complete_parameter#overload_down)
+smap <m-d> <Plug>(complete_parameter#overload_down)
+"Select previous overload function.
+nmap <m-u> <Plug>(complete_parameter#overload_up)
+imap <m-u> <Plug>(complete_parameter#overload_up)
+smap <m-u> <Plug>(complete_parameter#overload_up)
+"------------------------------------------------------------
+
+
+"----------------------------------------------------------------------
+" 生成项目的配置文件
+"----------------------------------------------------------------------
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 
 
 "----------------------------------------------------------------------
@@ -533,12 +660,15 @@ call plug#end()
 let g:ycm_add_preview_to_completeopt = 0
 
 " 禁用诊断功能：我们用前面更好用的 ALE 代替
+let g:ycm_python_binary_path = '/home/tgzhou/anaconda3/bin/python3'
+let g:ycm_server_python_interpreter ='/home/tgzhou/anaconda3/bin/python3'
+let g:ycm_global_ycm_extra_conf = "~/.vim/bundles/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
 let g:ycm_min_num_identifier_candidate_chars = 2
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
+let g:ycm_key_invoke_completion = '<c-space>'
 set completeopt=menu,menuone
 
 " noremap <c-z> <NOP>
