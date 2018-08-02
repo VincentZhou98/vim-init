@@ -15,7 +15,7 @@
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
-	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc']
+	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc', 'grammer']
 	let g:bundle_group += ['leaderf']
 endif
 
@@ -137,7 +137,7 @@ if index(g:bundle_group, 'basic') >= 0
 	nmap <m-e> <Plug>(choosewin)
 
 	" 默认不显示 startify
-	let g:startify_disable_at_vimenter = 1
+	let g:startify_disable_at_vimenter = 0
 	let g:startify_session_dir = '~/.vim/session'
 
 	" 使用 <space>ha 清除 errormarker 标注的错误
@@ -174,6 +174,9 @@ if index(g:bundle_group, 'enhanced') >= 0
 
 	" 使用 :FlyGrep 命令进行实时 grep
 	Plug 'wsdjeg/FlyGrep.vim'
+
+	" 项目内的搜索替换
+	Plug 'brooth/far.vim'
 
 	" 使用 :CtrlSF 命令进行模仿 sublime 的 grep
 	Plug 'dyng/ctrlsf.vim'
@@ -215,6 +218,12 @@ if index(g:bundle_group, 'tags') >= 0
 	" 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
 	" 支持光标移动到符号名上：<leader>cg 查看定义，<leader>cs 查看引用
 	Plug 'skywind3000/gutentags_plus'
+
+	let $GTAGSLABEL = 'native-pygments'
+	let $GTAGSCONF = '/home/tgzhou/.linuxbrew/Cellar/global/6.6.2_1/share/gtags/gtags.conf'
+
+	" Debug调试开启
+	let g:gutentags_define_advanced_commands = 1
 
 	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
 	let g:gutentags_project_root = ['.root', 'idea']
@@ -390,8 +399,8 @@ if index(g:bundle_group, 'ale') >= 0
 	" 编辑不同文件类型需要的语法检查器
 	let g:ale_linters = {
 				\ 'c': ['gcc', 'cppcheck'], 
-				\ 'cpp': ['gcc', 'cppcheck', 'yapf'], 
-				\ 'python': ['flake8', 'pylint'], 
+				\ 'cpp': ['gcc', 'cppcheck'], 
+				\ 'python': ['flake8', 'pylint', 'mypy'], 
 				\ 'lua': ['luac'], 
 				\ 'go': ['go build', 'gofmt'],
 				\ 'java': ['javac'],
@@ -418,6 +427,34 @@ if index(g:bundle_group, 'ale') >= 0
 	let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
 	let g:ale_c_cppcheck_options = ''
 	let g:ale_cpp_cppcheck_options = ''
+
+
+	let g:ale_python_mypy_options = '--python-executable /home/tgzhou/anaconda3/bin/python'
+	let g:ale_cpp_clangtidy_options = '-extra-arg=-std=c++14'
+	" let g:ale_cpp_clangtidy_executable = ''
+	" let g:ale_cpp_clangcheck_executable = ''
+	let g:ale_cpp_clangformat_options = "-style='{BasedOnStyle: LLVM, IndentWidth: 4}'"  "indent is important
+	let g:ale_c_clangformat_options = "-style='{BasedOnStyle: LLVM, IndentWidth: 4}'"  "indent is important
+	let g:ale_python_flake8_executable = '/home/tgzhou/anaconda3/bin/flake8'
+	let g:ale_python_mypy_executable = '/home/tgzhou/anaconda3/bin/mypy'
+	let g:ale_python_mypy_options = '--ignore-missing-imports --follow-imports=skip'
+	let g:ale_python_pylint_executable = '/home/tgzhou/anaconda3/bin/pylint'
+	let g:ale_python_isort_executable = '/home/tgzhou/anaconda3/bin/isort'
+	let g:ale_fixers = { 
+				\ 'python': ['yapf', 'isort'],
+				\ 'cpp': ['clang-format'],
+				\ 'c': ['clang-format'],
+				\}
+	let g:ale_python_yapf_executable = '/home/tgzhou/anaconda3/bin/yapf'
+	let g:ale_cpp_clangformat_executable = '/home/tgzhou/.linuxbrew/bin/clang-format'
+	let g:ale_c_clangformat_executable = '/home/tgzhou/.linuxbrew/bin/clang-format'
+	let g:ale_cpp_cppcheck_executable = '/home/tgzhou/.linuxbrew/cppcheck'
+	let g:ale_cpp_clang_executable = '/home/tgzhou/.linuxbrew/bin/clang'
+	let g:ale_c_clang_executable = '/home/tgzhou/.linuxbrew/bin/clang'
+	let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+	let g:ale_cpp_clang_options = '-Wall -O2 -std=c++14'
+	let g:ale_c_cppcheck_options = '--enable=all --inconclusive --std=c11'
+	let g:ale_cpp_cppcheck_options = '--enable=all --inconclusive --std=c++14'
 
 	let g:ale_linters.text = ['textlint', 'write-good', 'languagetool']
 
@@ -462,8 +499,8 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" ALT+SHIFT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
 		noremap <m-P> :LeaderfBufTag!<cr>
 
-		" ALT+n 打开 buffer 列表进行模糊匹配
-		noremap <m-n> :LeaderfBuffer<cr>
+		" ALT+b 打开 buffer 列表进行模糊匹配
+		noremap <m-b> :LeaderfBuffer<cr>
 
 		" 全局 tags 模糊匹配
 		noremap <m-m> :LeaderfTag<cr>
@@ -513,18 +550,6 @@ if index(g:bundle_group, 'leaderf') >= 0
 		" 不支持 python ，使用 CtrlP 代替
 		Plug 'ctrlpvim/ctrlp.vim'
 
-		" Multiple cursor
-		Plug 'terryma/vim-multiple-cursors'
-		" vim-multiple-cursors Setup {{{
-		function! Multiple_cursors_before()
-			call youcompleteme#DisableCursorMovedAutocommands()
-		endfunction
-
-		function! Multiple_cursors_after()
-			call youcompleteme#EnableCursorMovedAutocommands()
-		endfunction
-		" }}}
-
 		" 显示函数列表的扩展插件
 		Plug 'tacahiroy/ctrlp-funky'
 
@@ -556,36 +581,68 @@ if index(g:bundle_group, 'leaderf') >= 0
 	endif
 endif
 
+"------------------------------------------------------
 " 安装YCM
+"------------------------------------------------------
 Plug 'Valloric/YouCompleteMe'
 
+
+"------------------------------------------------------
+" vim 代码片段
+" supertab 可以与ycm共同合作
+"------------------------------------------------------
+Plug 'ervandew/supertab' 
+Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+
+"Ultisnips YCM
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion   = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger      = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+"------------------------------------------------------
 " Python相关
+"------------------------------------------------------
 Plug 'sillybun/vim-autodoc'
 Plug 'sillybun/vim-repl'
 
+"------------------------------------------------------
 " Vasp相关
+"------------------------------------------------------
 Plug 'alejandrogallo/vasp.vim'
 
+"------------------------------------------------------
 " 源文件头文件跳转
+"------------------------------------------------------
 Plug 'ericcurtin/CurtineIncSw.vim'
 
+"------------------------------------------------------
 " 更好地搜索功能 incsearch.vim
+"------------------------------------------------------
 Plug 'haya14busa/incsearch.vim'
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 "------------------------------------------------------
 
+"------------------------------------------------------
 " 进入QuickFix选择
+"------------------------------------------------------
 Plug 'yssl/QFEnter'
 "QFENTER
 let g:qfenter_keymap = {}
 let g:qfenter_keymap.vopen = ['<C-v>']
 let g:qfenter_keymap.hopen = ['<C-CR>', '<C-s>', '<C-x>']
 let g:qfenter_keymap.topen = ['<C-t>']
-"------------------------------------------------------------------
 
+"------------------------------------------------------
 " 注释插件
+"------------------------------------------------------
 Plug 'tpope/vim-commentary'
 
 "----------------------------------------------------------------------
@@ -602,6 +659,25 @@ let g:vimtex_view_method = 'skim'
 "经验!!!!!!!!!!!!!!!!!!!!!!
 "因此可以用<leader>ll 来操作，自动刷新latex编译
 let g:vimtex_latexmk_options = '-pdf -pdflatex="xelatex --shell-escape %O %S " -verbose -file-line-error -synctex=1 -interaction=nonstopmode'
+
+" 打开pdf预览
+map ,r :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline <C-r>=line('.')<CR> %<.pdf<CR>
+
+
+
+"----------------------------------------------------------------------
+" 多光标移动
+"----------------------------------------------------------------------
+Plug 'terryma/vim-multiple-cursors'
+" vim-multiple-cursors Setup {{{
+function! Multiple_cursors_before()
+	call youcompleteme#DisableCursorMovedAutocommands()
+endfunction
+
+function! Multiple_cursors_after()
+	call youcompleteme#EnableCursorMovedAutocommands()
+endfunction
+" }}}
 
 
 
@@ -668,10 +744,17 @@ let g:ycm_server_log_level = 'info'
 let g:ycm_min_num_identifier_candidate_chars = 2
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-space>'
+let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone
 
-" noremap <c-z> <NOP>
+noremap <c-z> <NOP>
+
+" 保留几个好用的跳转
+nnoremap <leader>gg :YcmCompleter GoTo<CR>
+"nnoremap <leader>gf :YcmCompleter FixIt<CR>
+"nnoremap <leader>gi :YcmCompleter GoToInclude<CR>
+nnoremap <leader>gt :YcmCompleter GetType<CR>
+nnoremap <leader>gdc :YcmCompleter GetDoc<CR>
 
 " 两个字符自动触发语义补全
 let g:ycm_semantic_triggers =  {

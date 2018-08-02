@@ -52,9 +52,6 @@ set t_Co=256
 " 设置颜色主题，会在所有 runtimepaths 的 colors 目录寻找同名配置
 color desert256
 
-colorscheme gruvbox
-set guifont=Fira\ Code\ 14
-
 
 "----------------------------------------------------------------------
 " 状态栏设置
@@ -291,4 +288,13 @@ set guitablabel=%{Vim_NeatGuiTabLabel()}
 set guitabtooltip=%{Vim_NeatGuiTabTip()}
 
 
+
+colorscheme gruvbox
+if has("gui_macvim")
+	set guifont=Fira\ Code:h14
+	set macmeta
+	set macligatures
+else
+	set guifont=Fira\ Code\ 14
+endif
 
