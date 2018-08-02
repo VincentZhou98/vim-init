@@ -49,5 +49,7 @@ LoadScript init/init-style.vim
 " 自定义按键
 LoadScript init/init-keymaps.vim
 
+" 很多初始文件snippest
+LoadScript init/init-snippest.vim
 
 

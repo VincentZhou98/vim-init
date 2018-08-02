@@ -243,8 +243,8 @@ let g:asyncrun_bell = 1
 " 设置 F10 打开/关闭 Quickfix 窗口
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
-" F9 编译 C/C++ 文件
-nnoremap <silent> <F9> :AsyncRun gcc -Wall -O2 "$(VIM_FILEPATH)" -o "$(VIM_FILEDIR)/$(VIM_FILENOEXT)" <cr>
+" F9 编译多种文件
+nnoremap <silent> <F9> :call Compilefile()<cr>
 
 " F5 运行文件
 nnoremap <silent> <F5> :call ExecuteFile()<cr>
@@ -253,19 +253,40 @@ nnoremap <silent> <F5> :call ExecuteFile()<cr>
 nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
 
 " F8 运行项目
-nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
+" nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
+nnoremap <silent> <F8> :AsyncRun -raw -cwd=<root> if [[ -f "CMakeLists.txt" ]]; then cd build && ./$(find . -maxdepth 1 -type f -executable -print) && cd .. ; else  make run; fi <cr>
 
 " F6 测试项目
 nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
 
 " 更新 cmake
-nnoremap <silent> <F4> :AsyncRun -cwd=<root> cmake . <cr>
+" nnoremap <silent> <F4> :AsyncRun -cwd=<root> cmake . <cr>
+nnoremap <silent> <F4> :AsyncRun -raw -cwd=<root> if [[ -f "CMakeLists.txt" ]]; then if [[ -d "build" ]]; then mkdir "build"; fi && cd build && cmake .. && make && cd .. ;fi <cr>
 
 " Windows 下支持直接打开新 cmd 窗口运行
 if has('win32') || has('win64')
 	nnoremap <silent> <F8> :AsyncRun -cwd=<root> -mode=4 make run <cr>
 endif
 
+
+function! Compilefile()
+	exec "w"
+	if &filetype == 'c'
+		exec "AsyncRun gcc -Wall -std=c11 -O2 \"$(VIM_FILEPATH)\" -o \"$(VIM_FILEDIR)/$(VIM_FILENOEXT)\" "
+	elseif &filetype == 'cuda'
+		exec "AsyncRun nvcc -Wall -std=c11 -O2 \"$(VIM_FILEPATH)\" -o \"$(VIM_FILEDIR)/$(VIM_FILENOEXT)\" "
+	elseif &filetype == 'cpp'
+		exec "AsyncRun g++ -Wall -std=c++14 -O2 \"$(VIM_FILEPATH)\" -o \"$(VIM_FILEDIR)/$(VIM_FILENOEXT)\" "
+	elseif &filetype == 'shell'
+		exec "AsyncRun bash \"$(VIM_FILEPATH)\" "
+	elseif &filetype == 'java' 
+		exec "AsyncRun javac \"$(VIM_FILEPATH)\" " 
+	elseif &filetype == 'fortran'
+		exec "AsyncRun gfortran -Wall -O2 \"$(VIM_FILEPATH)\" -o \"$(VIM_FILEDIR)/$(VIM_FILENOEXT)\" "
+	else
+		exec "AsyncRun -raw -cwd=<root> make "
+	endif
+endfunction
 
 "----------------------------------------------------------------------
 " F5 运行当前文件：根据文件类型判断方法，并且输出到 quickfix 窗口
@@ -322,7 +343,7 @@ endfunc
 "----------------------------------------------------------------------
 if executable('rg')
 	noremap <silent><F2> :AsyncRun! -cwd=<root> rg -n --no-heading 
-				\ --color never -g *.h -g *.c* -g *.py -g *.js -g *.vim 
+				\ --color never -g '*.h' -g '*.c*' -g '*.py' -g '*.js' -g '*.vim'
 				\ <C-R><C-W> "<root>" <cr>
 elseif has('win32') || has('win64')
 	noremap <silent><F2> :AsyncRun! -cwd=<root> findstr /n /s /C:"<C-R><C-W>" 
@@ -337,3 +358,19 @@ else
 endif
 
 
+"----------------------------------------------------------------------
+" 清除搜索高亮
+"----------------------------------------------------------------------
+nnoremap <leader>n :noh <CR>
+
+
+"----------------------------------------------------------------------
+" 不要使用隐藏模式
+"----------------------------------------------------------------------
+nnoremap <leader>sc :set conceallevel=0 <CR>
+
+
+"----------------------------------------------------------------------
+" 触发粘贴模式
+"----------------------------------------------------------------------
+set pastetoggle=<F11>

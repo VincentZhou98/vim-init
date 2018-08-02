@@ -172,5 +172,6 @@ set wildignore+=*.linux2,*.win32,*.darwin,*.freebsd,*.linux,*.android
 "----------------------------------------------------------------------
 " 设置login shell
 "----------------------------------------------------------------------
-set shell=bash\ --login
+set shell=bash
+set shellcmdflag=-c
 

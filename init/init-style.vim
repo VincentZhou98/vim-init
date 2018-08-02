@@ -50,7 +50,7 @@ set background=dark
 set t_Co=256
 
 " 设置颜色主题，会在所有 runtimepaths 的 colors 目录寻找同名配置
-color desert256
+" color desert256
 
 
 "----------------------------------------------------------------------
@@ -298,3 +298,15 @@ else
 	set guifont=Fira\ Code\ 14
 endif
 
+"----------------------------------------------------------------------
+" NVIM设置cursor形状
+"----------------------------------------------------------------------
+if has('nvim')
+	set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+		  \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+		  \,sm:block-blinkwait175-blinkoff150-blinkon175
+elseif has('vim')
+	" Verical bar in insert mode (for iTerm users only)
+	let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+	let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif

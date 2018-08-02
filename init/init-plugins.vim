@@ -17,6 +17,8 @@ if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc', 'grammer']
 	let g:bundle_group += ['leaderf']
+	let g:bundle_group += ['complete', 'python', 'source_header', 'tex']
+	" let g:bundle_group += ['markdown']
 endif
 
 
@@ -190,6 +192,15 @@ if index(g:bundle_group, 'enhanced') >= 0
 	nnoremap <C-F>t :CtrlSFToggle<CR>
 	inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
 
+	"指定CtrlSF backend，最好是用最快的rg，别用ack
+	let g:ctrlsf_ackprg = 'rg'
+	
+	" 当搜索结束时,focus搜索panel
+	let g:ctrlsf_auto_focus = {
+    \ "at": "done",
+    \ "duration_less_than": 1000
+    \ }
+
 	" 异步Grepper
 	Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
 
@@ -202,6 +213,65 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
 	map <m--> <Plug>(expand_region_shrink)
+
+	"------------------------------------------------------
+	" 下面是我的enhanced内容
+	"------------------------------------------------------
+
+	" 更好地搜索功能 incsearch.vim
+	Plug 'haya14busa/incsearch.vim'
+	map /  <Plug>(incsearch-forward)
+	map ?  <Plug>(incsearch-backward)
+	map g/ <Plug>(incsearch-stay)
+
+	" 进入QuickFix选择
+	Plug 'yssl/QFEnter'
+	"QFENTER
+	let g:qfenter_keymap = {}
+	let g:qfenter_keymap.vopen = ['<C-v>']
+	let g:qfenter_keymap.hopen = ['<C-CR>', '<C-s>', '<C-x>']
+	let g:qfenter_keymap.topen = ['<C-t>']
+
+	" 注释插件
+	Plug 'tpope/vim-commentary'
+
+	" 多光标移动
+	Plug 'terryma/vim-multiple-cursors'
+
+	" 下面的设置为了让YCM不卡
+	" vim-multiple-cursors Setup {{{
+	function! Multiple_cursors_before()
+		call youcompleteme#DisableCursorMovedAutocommands()
+	endfunction
+
+	function! Multiple_cursors_after()
+		call youcompleteme#EnableCursorMovedAutocommands()
+	endfunction
+	" }}}
+
+
+	" 重复vim的动作
+	Plug 'tpope/vim-repeat'
+
+	" 与YCM合作，补全函数的所有内容
+	Plug 'tenfyzhong/CompleteParameter.vim'
+	inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+	"Goto next parameter and select it.
+	nmap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+	imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+	smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+	"Goto previous parameter and select it.
+	nmap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+	imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+	smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+	"Select next overload function.
+	nmap <m-d> <Plug>(complete_parameter#overload_down)
+	imap <m-d> <Plug>(complete_parameter#overload_down)
+	smap <m-d> <Plug>(complete_parameter#overload_down)
+	"Select previous overload function.
+	nmap <m-u> <Plug>(complete_parameter#overload_up)
+	imap <m-u> <Plug>(complete_parameter#overload_up)
+	smap <m-u> <Plug>(complete_parameter#overload_up)
 endif
 
 
@@ -312,6 +382,9 @@ if index(g:bundle_group, 'filetypes') >= 0
 
 	" vim org-mode 
 	Plug 'jceb/vim-orgmode', { 'for': 'org' }
+
+	" Vasp相关
+	Plug 'alejandrogallo/vasp.vim'
 endif
 
 
@@ -581,144 +654,119 @@ if index(g:bundle_group, 'leaderf') >= 0
 	endif
 endif
 
+
+"----------------------------------------------------------------------
+" markdown写作插件
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'markdown') >= 0
+	" vim-markdonw-composer
+	function! BuildComposer(info)
+	  if a:info.status != 'unchanged' || a:info.force
+		if has('nvim')
+		  !cargo build --release
+		else
+		  !cargo build --release --no-default-features --features json-rpc
+		endif
+	  endif
+	endfunction
+	Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+endif
+
 "------------------------------------------------------
-" 安装YCM
+" 补全插件
 "------------------------------------------------------
-Plug 'Valloric/YouCompleteMe'
+if index(g:bundle_group, 'complete') >= 0
+	" 安装YCM
+	Plug 'Valloric/YouCompleteMe'
+
+	" 生成项目的配置文件
+	Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+
+	" vim 代码片段
+	" supertab 可以与ycm共同合作
+	Plug 'ervandew/supertab' 
+	Plug 'honza/vim-snippets'
+	Plug 'SirVer/ultisnips'
+
+	"Ultisnips YCM
+	" make YCM compatible with UltiSnips (using supertab)
+	let g:ycm_key_list_select_completion   = ['<C-n>', '<Down>']
+	let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+	let g:SuperTabDefaultCompletionType = '<C-n>'
+	" better key bindings for UltiSnipsExpandTrigger
+	let g:UltiSnipsExpandTrigger      = "<tab>"
+	let g:UltiSnipsJumpForwardTrigger = "<tab>"
+	let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+endif
+
+
 
 
 "------------------------------------------------------
-" vim 代码片段
-" supertab 可以与ycm共同合作
+" Python功能增强插件相关
 "------------------------------------------------------
-Plug 'ervandew/supertab' 
-Plug 'honza/vim-snippets'
-Plug 'SirVer/ultisnips'
+if index(g:bundle_group, 'python') >= 0
+	Plug 'heavenshell/vim-pydocstring'
+	Plug 'sillybun/vim-autodoc'
+	Plug 'sillybun/vim-repl'
 
-"Ultisnips YCM
-" make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion   = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
-" better key bindings for UltiSnipsExpandTrigger
-let g:UltiSnipsExpandTrigger      = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+	"PERL vim 
+	nnoremap <leader>r :REPLToggle<Cr>
+	let g:sendtorepl_invoke_key = "<leader>w"
+	let g:repl_program = {
+		\	"python": "/home/tgzhou/anaconda3/bin/python",
+		\	"gnuplot": "gnuplot",
+		\	"matlab": "matlab -nodesktop -nosplash",
+		\	"cpp.root": "root -l",
+		\	"cpp": "cling -std=c++14",
+		\	"mma": "MathematicaScript",
+		\	"zsh": "zsh",
+		\	"default": "bash",
+		\	}  
+	" root -l close splash window and work with stdin 
+	let g:repl_height = 15
+	let g:repl_width = 30
+	let g:repl_position = 3 
+	let g:repl_exit_commands = {
+				\	"/home/tgzhou/anaconda3/bin/python": "exit()",
+				\	"bash": "exit",
+				\	"root": ".q",
+				\	"zsh": "exit",
+				\	"default": "exit",
+				\	}
+endif
 
-"------------------------------------------------------
-" Python相关
-"------------------------------------------------------
-Plug 'sillybun/vim-autodoc'
-Plug 'sillybun/vim-repl'
-
-"------------------------------------------------------
-" Vasp相关
-"------------------------------------------------------
-Plug 'alejandrogallo/vasp.vim'
 
 "------------------------------------------------------
 " 源文件头文件跳转
 "------------------------------------------------------
-Plug 'ericcurtin/CurtineIncSw.vim'
+if index(g:bundle_group, 'source_header') >= 0
+	Plug 'ericcurtin/CurtineIncSw.vim'
+endif
 
-"------------------------------------------------------
-" 更好地搜索功能 incsearch.vim
-"------------------------------------------------------
-Plug 'haya14busa/incsearch.vim'
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-"------------------------------------------------------
-
-"------------------------------------------------------
-" 进入QuickFix选择
-"------------------------------------------------------
-Plug 'yssl/QFEnter'
-"QFENTER
-let g:qfenter_keymap = {}
-let g:qfenter_keymap.vopen = ['<C-v>']
-let g:qfenter_keymap.hopen = ['<C-CR>', '<C-s>', '<C-x>']
-let g:qfenter_keymap.topen = ['<C-t>']
-
-"------------------------------------------------------
-" 注释插件
-"------------------------------------------------------
-Plug 'tpope/vim-commentary'
 
 "----------------------------------------------------------------------
 " vim tex写作
 "----------------------------------------------------------------------
-Plug 'lervag/vimtex'
-"Fold, integrate with fastfold plugin
-let g:vimtex_fold_enabled = 1
-let g:vimtex_quickfix_enabled = 0
-let g:vimtex_view_method = 'skim'
-"********************************************************
-"注意！！！！！！！！！！！
-"这里设置了没有用，要在~/.latexmkrc 里面设置才有用
-"经验!!!!!!!!!!!!!!!!!!!!!!
-"因此可以用<leader>ll 来操作，自动刷新latex编译
-let g:vimtex_latexmk_options = '-pdf -pdflatex="xelatex --shell-escape %O %S " -verbose -file-line-error -synctex=1 -interaction=nonstopmode'
+if index(g:bundle_group, 'tex') >= 0
+	" vimtex 折叠很方便
+	Plug 'Konfekt/FastFold'
 
-" 打开pdf预览
-map ,r :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline <C-r>=line('.')<CR> %<.pdf<CR>
+	Plug 'lervag/vimtex'
+	"Fold, integrate with fastfold plugin
+	let g:vimtex_fold_enabled = 1
+	let g:vimtex_quickfix_enabled = 0
+	let g:vimtex_view_method = 'skim'
+	"********************************************************
+	"注意！！！！！！！！！！！
+	"这里设置了没有用，要在~/.latexmkrc 里面设置才有用
+	"经验!!!!!!!!!!!!!!!!!!!!!!
+	"因此可以用<leader>ll 来操作，自动刷新latex编译
+	let g:vimtex_latexmk_options = '-pdf -pdflatex="xelatex --shell-escape %O %S " -verbose -file-line-error -synctex=1 -interaction=nonstopmode'
 
-
-
-"----------------------------------------------------------------------
-" 多光标移动
-"----------------------------------------------------------------------
-Plug 'terryma/vim-multiple-cursors'
-" vim-multiple-cursors Setup {{{
-function! Multiple_cursors_before()
-	call youcompleteme#DisableCursorMovedAutocommands()
-endfunction
-
-function! Multiple_cursors_after()
-	call youcompleteme#EnableCursorMovedAutocommands()
-endfunction
-" }}}
-
-
-
-"----------------------------------------------------------------------
-" 重复vim的动作
-"----------------------------------------------------------------------
-Plug 'tpope/vim-repeat'
-
-"----------------------------------------------------------------------
-" vimtex 折叠很方便
-" "----------------------------------------------------------------------
-Plug 'Konfekt/FastFold'
-
-"----------------------------------------------------------------------
-" 补全函数的所有内容
-"----------------------------------------------------------------------
-Plug 'tenfyzhong/CompleteParameter.vim'
-inoremap <silent><expr> ( complete_parameter#pre_complete("()")
-"Goto next parameter and select it.
-nmap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-"Goto previous parameter and select it.
-nmap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
-imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
-smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
-"Select next overload function.
-nmap <m-d> <Plug>(complete_parameter#overload_down)
-imap <m-d> <Plug>(complete_parameter#overload_down)
-smap <m-d> <Plug>(complete_parameter#overload_down)
-"Select previous overload function.
-nmap <m-u> <Plug>(complete_parameter#overload_up)
-imap <m-u> <Plug>(complete_parameter#overload_up)
-smap <m-u> <Plug>(complete_parameter#overload_up)
-"------------------------------------------------------------
-
-
-"----------------------------------------------------------------------
-" 生成项目的配置文件
-"----------------------------------------------------------------------
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+	" 打开pdf预览
+	map ,r :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline <C-r>=line('.')<CR> %<.pdf<CR>
+endif
 
 
 "----------------------------------------------------------------------
