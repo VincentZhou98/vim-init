@@ -175,3 +175,14 @@ set wildignore+=*.linux2,*.win32,*.darwin,*.freebsd,*.linux,*.android
 set shell=bash
 set shellcmdflag=-c
 
+
+"----------------------------------------------------------------------
+" 确定系统环境
+"----------------------------------------------------------------------
+if !exists("g:os")
+    if has("win64") || has("win32") || has("win16")
+        let g:os = "Windows"
+    else
+        let g:os = substitute(system('uname'), '\n', '', '')
+    endif
+endif

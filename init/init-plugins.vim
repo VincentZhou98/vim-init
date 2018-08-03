@@ -17,7 +17,7 @@ if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc', 'grammer']
 	let g:bundle_group += ['leaderf']
-	let g:bundle_group += ['complete', 'python', 'source_header', 'tex']
+	let g:bundle_group += ['complete', 'python_doc', 'source_header', 'tex']
 	let g:bundle_group += ['markdown']
 endif
 
@@ -38,14 +38,7 @@ endfunc
 "----------------------------------------------------------------------
 let anaconda_python = $HOME . '/anaconda3/bin/python'
 
-if !exists("g:os")
-    if has("win64") || has("win32") || has("win16")
-        let g:os = "Windows"
-    else
-        let g:os = substitute(system('uname'), '\n', '', '')
-    endif
-endif
-
+" g:os 已经在init-basic.vim中定义
 if g:os == "Darwin"
 	let clang_format_exec = '/usr/local/opt/llvm@5/bin/clang-format'
 	let gtags_conf = '/usr/local/share/gtags/gtags.conf'
@@ -533,22 +526,14 @@ if index(g:bundle_group, 'ale') >= 0
 	" let g:ale_cpp_clangcheck_executable = ''
 	let g:ale_cpp_clangformat_options = "-style='{BasedOnStyle: LLVM, IndentWidth: 4}'"  "indent is important
 	let g:ale_c_clangformat_options = "-style='{BasedOnStyle: LLVM, IndentWidth: 4}'"  "indent is important
-	let g:ale_python_flake8_executable = '/home/tgzhou/anaconda3/bin/flake8'
-	let g:ale_python_mypy_executable = '/home/tgzhou/anaconda3/bin/mypy'
 	let g:ale_python_mypy_options = '--ignore-missing-imports --follow-imports=skip'
-	let g:ale_python_pylint_executable = '/home/tgzhou/anaconda3/bin/pylint'
-	let g:ale_python_isort_executable = '/home/tgzhou/anaconda3/bin/isort'
 	let g:ale_fixers = { 
 				\ 'python': ['yapf', 'isort'],
 				\ 'cpp': ['clang-format'],
 				\ 'c': ['clang-format'],
 				\}
-	let g:ale_python_yapf_executable = '/home/tgzhou/anaconda3/bin/yapf'
-	let g:ale_cpp_clangformat_executable = '/usr/local/opt/llvm@5/bin/clang-format'
-	let g:ale_c_clangformat_executable = '/usr/local/opt/llvm@5/bin/clang-format'
-	let g:ale_cpp_cppcheck_executable = '/usr/local/bin/cppcheck'
-	let g:ale_cpp_clang_executable = '/usr/bin/clang'
-	let g:ale_c_clang_executable = '/usr/bin/clang'
+	let g:ale_cpp_clangformat_executable = clang_format_exec
+	let g:ale_c_clangformat_executable = clang_format_exec
 	let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
 	let g:ale_cpp_clang_options = '-Wall -O2 -std=c++14'
 	let g:ale_c_cppcheck_options = '--enable=all --inconclusive --std=c11'
@@ -728,14 +713,19 @@ endif
 
 
 "------------------------------------------------------
-" Python功能增强插件相关
+" Python文档功能增强插件相关
 "------------------------------------------------------
-if index(g:bundle_group, 'python') >= 0
+if index(g:bundle_group, 'python_doc') >= 0
 	Plug 'heavenshell/vim-pydocstring'
 	" Plug 'sillybun/vim-autodoc'
-	Plug 'sillybun/vim-repl'
+endif
 
+"------------------------------------------------------
+" repl 功能 现在不太好用
+"------------------------------------------------------
+if index(g:bundle_group, 'repl') >= 0
 	"PERL vim 
+	Plug 'sillybun/vim-repl'
 	nnoremap <leader>r :REPLToggle<Cr>
 	let g:sendtorepl_invoke_key = "<leader>w"
 	let g:repl_program = {

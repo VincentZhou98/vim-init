@@ -38,6 +38,9 @@ set showcmd
 " 水平切割窗口时，默认在右边显示新窗口
 set splitright
 
+" 使用gui时显示工具
+set guioptions+=T           " 加入工具栏
+set guioptions+=m           " 加入菜单栏
 
 "----------------------------------------------------------------------
 " 颜色主题：色彩文件位于 colors 目录中
@@ -52,6 +55,7 @@ set t_Co=256
 " 设置颜色主题，会在所有 runtimepaths 的 colors 目录寻找同名配置
 " color desert256
 
+colorscheme gruvbox
 
 "----------------------------------------------------------------------
 " 状态栏设置
@@ -288,15 +292,16 @@ set guitablabel=%{Vim_NeatGuiTabLabel()}
 set guitabtooltip=%{Vim_NeatGuiTabTip()}
 
 
-
-colorscheme gruvbox
-if has("gui_macvim")
-	set guifont=Fira\ Code:h14
-	set macmeta
-	set macligatures
-else
-	set guifont=Fira\ Code\ 14
+if has('gui_running')
+	if g:os == "Darwin"
+		set guifont=Fira\ Code:h15
+		set macmeta
+		set macligatures
+	elseif g:os == "Linux"
+		set guifont=Fira\ Code\ 15
+	endif
 endif
+
 
 "----------------------------------------------------------------------
 " NVIM设置cursor形状
