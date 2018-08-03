@@ -18,7 +18,7 @@ if !exists('g:bundle_group')
 	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc', 'grammer']
 	let g:bundle_group += ['leaderf']
 	let g:bundle_group += ['complete', 'python', 'source_header', 'tex']
-	" let g:bundle_group += ['markdown']
+	let g:bundle_group += ['markdown']
 endif
 
 
@@ -32,6 +32,31 @@ function! s:path(path)
 	return substitute(path, '\\', '/', 'g')
 endfunc
 
+
+"----------------------------------------------------------------------
+" 定义一些变量
+"----------------------------------------------------------------------
+let anaconda_python = $HOME . '/anaconda3/bin/python'
+
+if !exists("g:os")
+    if has("win64") || has("win32") || has("win16")
+        let g:os = "Windows"
+    else
+        let g:os = substitute(system('uname'), '\n', '', '')
+    endif
+endif
+
+if g:os == "Darwin"
+	let clang_format_exec = '/usr/local/opt/llvm@5/bin/clang-format'
+	let gtags_conf = '/usr/local/share/gtags/gtags.conf'
+	let ycm_python_interpreter = '/usr/local/bin/python3'
+	let ycm_python_binary = anaconda_python
+elseif g:os == "Linux"
+	let clang_format_exec = 'clang-format'
+	let gtags_conf = $HOME . '/.linuxbrew/share/gtags/gtags.conf'
+	let ycm_python_interpreter = anaconda_python
+	let ycm_python_binary = anaconda_python
+endif
 
 "----------------------------------------------------------------------
 " 在 ~/.vim/bundles 下安装插件
@@ -290,7 +315,7 @@ if index(g:bundle_group, 'tags') >= 0
 	Plug 'skywind3000/gutentags_plus'
 
 	let $GTAGSLABEL = 'native-pygments'
-	let $GTAGSCONF = '/home/tgzhou/.linuxbrew/Cellar/global/6.6.2_1/share/gtags/gtags.conf'
+	let $GTAGSCONF = gtags_conf
 
 	" Debug调试开启
 	let g:gutentags_define_advanced_commands = 1
@@ -519,11 +544,11 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'c': ['clang-format'],
 				\}
 	let g:ale_python_yapf_executable = '/home/tgzhou/anaconda3/bin/yapf'
-	let g:ale_cpp_clangformat_executable = '/home/tgzhou/.linuxbrew/bin/clang-format'
-	let g:ale_c_clangformat_executable = '/home/tgzhou/.linuxbrew/bin/clang-format'
-	let g:ale_cpp_cppcheck_executable = '/home/tgzhou/.linuxbrew/cppcheck'
-	let g:ale_cpp_clang_executable = '/home/tgzhou/.linuxbrew/bin/clang'
-	let g:ale_c_clang_executable = '/home/tgzhou/.linuxbrew/bin/clang'
+	let g:ale_cpp_clangformat_executable = '/usr/local/opt/llvm@5/bin/clang-format'
+	let g:ale_c_clangformat_executable = '/usr/local/opt/llvm@5/bin/clang-format'
+	let g:ale_cpp_cppcheck_executable = '/usr/local/bin/cppcheck'
+	let g:ale_cpp_clang_executable = '/usr/bin/clang'
+	let g:ale_c_clang_executable = '/usr/bin/clang'
 	let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
 	let g:ale_cpp_clang_options = '-Wall -O2 -std=c++14'
 	let g:ale_c_cppcheck_options = '--enable=all --inconclusive --std=c11'
@@ -707,14 +732,14 @@ endif
 "------------------------------------------------------
 if index(g:bundle_group, 'python') >= 0
 	Plug 'heavenshell/vim-pydocstring'
-	Plug 'sillybun/vim-autodoc'
+	" Plug 'sillybun/vim-autodoc'
 	Plug 'sillybun/vim-repl'
 
 	"PERL vim 
 	nnoremap <leader>r :REPLToggle<Cr>
 	let g:sendtorepl_invoke_key = "<leader>w"
 	let g:repl_program = {
-		\	"python": "/home/tgzhou/anaconda3/bin/python",
+		\	"python": $anaconda_python,
 		\	"gnuplot": "gnuplot",
 		\	"matlab": "matlab -nodesktop -nosplash",
 		\	"cpp.root": "root -l",
@@ -728,7 +753,7 @@ if index(g:bundle_group, 'python') >= 0
 	let g:repl_width = 30
 	let g:repl_position = 3 
 	let g:repl_exit_commands = {
-				\	"/home/tgzhou/anaconda3/bin/python": "exit()",
+				\	$anaconda_python: "exit()",
 				\	"bash": "exit",
 				\	"root": ".q",
 				\	"zsh": "exit",
@@ -784,8 +809,8 @@ call plug#end()
 let g:ycm_add_preview_to_completeopt = 0
 
 " 禁用诊断功能：我们用前面更好用的 ALE 代替
-let g:ycm_python_binary_path = '/home/tgzhou/anaconda3/bin/python3'
-let g:ycm_server_python_interpreter ='/home/tgzhou/anaconda3/bin/python3'
+let g:ycm_python_binary_path = ycm_python_binary 
+let g:ycm_server_python_interpreter = ycm_python_interpreter
 let g:ycm_global_ycm_extra_conf = "~/.vim/bundles/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
