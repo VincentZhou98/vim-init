@@ -298,7 +298,7 @@ if has('gui_running')
 		set macmeta
 		set macligatures
 	elseif g:os == "Linux"
-		set guifont=Fira\ Code\ 15
+		set guifont=Fira\ Code\ 13
 	endif
 endif
 

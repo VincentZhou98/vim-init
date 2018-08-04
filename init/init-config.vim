@@ -185,3 +185,11 @@ augroup InitFileTypesGroup
 augroup END
 
 
+"----------------------------------------------------------------------
+" 设置clipboard(其实已经设置好，不用再设置)
+"----------------------------------------------------------------------
+if has('nvim')
+    set clipboard=unnamedplus
+else
+    set clipboard=unnamed
+endif
