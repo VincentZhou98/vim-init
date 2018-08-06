@@ -521,6 +521,7 @@ if index(g:bundle_group, 'ale') >= 0
 
 
 	let g:ale_python_mypy_options = '--python-executable /home/tgzhou/anaconda3/bin/python'
+	let g:ale_cpp_clangcheck_options = '-extra-arg=-std=c++14'
 	let g:ale_cpp_clangtidy_options = '-extra-arg=-std=c++14'
 	" let g:ale_cpp_clangtidy_executable = ''
 	" let g:ale_cpp_clangcheck_executable = ''
@@ -547,6 +548,34 @@ if index(g:bundle_group, 'ale') >= 0
 		let g:ale_linters.cpp += ['clang']
 	endif
 endif
+
+"----------------------------------------------------------------------
+" LSP补全与分析 
+"----------------------------------------------------------------------
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_settingsPath = expand('~/.vim/vim-init/tools/conf/languageclient.json')
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'python': ['pyls'],
+    \ 'c': ['cquery'],
+    \ 'cpp': ['cquery'],
+    \ }
+
+" Or map each action separately
+noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+noremap <leader>rh :call LanguageClient#textDocument_hover()<cr>
+nnoremap <silent> <leader>rr :call LanguageClient#textDocument_rename()<CR>
+nnoremap <leader>rm :call LanguageClient_contextMenu()<CR>
 
 
 "----------------------------------------------------------------------
@@ -757,6 +786,7 @@ endif
 "------------------------------------------------------
 if index(g:bundle_group, 'source_header') >= 0
 	Plug 'ericcurtin/CurtineIncSw.vim'
+	map <leader>sh :call CurtineIncSw()<CR>
 endif
 
 

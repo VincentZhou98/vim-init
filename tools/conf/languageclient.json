@@ -1,0 +1,5 @@
+{
+    "initializationOptions": {
+            "cacheDirectory": "/home/tgzhou/.cache/LanguageClient"
+    }
+}
