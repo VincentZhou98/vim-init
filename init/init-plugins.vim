@@ -489,9 +489,9 @@ if index(g:bundle_group, 'ale') >= 0
 
 	" 编辑不同文件类型需要的语法检查器
 	let g:ale_linters = {
-				\ 'c': ['gcc', 'cppcheck'], 
-				\ 'cpp': ['gcc', 'cppcheck'], 
-				\ 'python': ['flake8', 'pylint', 'mypy'], 
+				\ 'c': ['gcc', 'cppcheck', 'cquery'], 
+				\ 'cpp': ['gcc', 'cppcheck', 'cquery'], 
+				\ 'python': ['flake8', 'pylint', 'mypy', 'McCabe'], 
 				\ 'lua': ['luac'], 
 				\ 'go': ['go build', 'gofmt'],
 				\ 'java': ['javac'],
@@ -558,10 +558,14 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ }
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_settingsPath = expand('~/.vim/vim-init/tools/conf/languageclient.json')
+if g:os == "Darwin"
+	let g:LanguageClient_settingsPath = expand('~/.vim/vim-init/tools/conf/languageclient_mac.json')
+elseif g:os == "Linux"
+	let g:LanguageClient_settingsPath = expand('~/.vim/vim-init/tools/conf/languageclient_linux.json')
+endif
 let g:LanguageClient_selectionUI = 'quickfix'
 let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
+" let g:LanguageClient_hoverPreview = 'Never'
 
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
