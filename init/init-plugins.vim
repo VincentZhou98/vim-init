@@ -487,6 +487,10 @@ if index(g:bundle_group, 'ale') >= 0
 	" 允许 airline 集成
 	let g:airline#extensions#ale#enabled = 1
 
+	" ALEFix 快捷键
+	" 相应的YCM也有一个fix
+	nmap <leader>f <Plug>(ale_fix)
+
 	" 编辑不同文件类型需要的语法检查器
 	let g:ale_linters = {
 				\ 'c': ['gcc', 'cppcheck', 'cquery'], 
@@ -578,7 +582,7 @@ let g:LanguageClient_serverCommands = {
 noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
 noremap <leader>rh :call LanguageClient#textDocument_hover()<cr>
-nnoremap <silent> <leader>rr :call LanguageClient#textDocument_rename()<CR>
+nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 nnoremap <leader>rm :call LanguageClient_contextMenu()<CR>
 
 
@@ -727,22 +731,23 @@ if index(g:bundle_group, 'complete') >= 0
 
 	" vim 代码片段
 	" supertab 可以与ycm共同合作
-	Plug 'ervandew/supertab' 
+	" Plug 'ervandew/supertab' 
 	Plug 'honza/vim-snippets'
 	Plug 'SirVer/ultisnips'
 
 	"Ultisnips YCM
 	" make YCM compatible with UltiSnips (using supertab)
-	let g:ycm_key_list_select_completion   = ['<C-n>', '<Down>']
-	let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-	let g:SuperTabDefaultCompletionType = '<C-n>'
+	let g:ycm_key_list_select_completion             = ['<C-n>', '<Down>']
+	let g:ycm_key_list_previous_completion           = ['<C-p>', '<Up>']
+	" let g:SuperTabDefaultCompletionType            = '<C-n>'
 	" better key bindings for UltiSnipsExpandTrigger
-	let g:UltiSnipsExpandTrigger      = "<tab>"
-	let g:UltiSnipsJumpForwardTrigger = "<tab>"
-	let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+	let g:UltiSnipsExpandTrigger                     = "<tab>"
+	let g:UltiSnipsListSnippets                      = "<c-s>"
+	let g:UltiSnipsEditSplit                         = "vertical"
+	let g:UltiSnipsSnippetsDir                       = expand("~/.vim/vim-init/tools/conf/my_snippets")
+	" Already have vim-snippest Ultisnips directory
+	let g:UltiSnipsSnippetDirectories                = ['UltiSnips', expand("~/.vim/vim-init/tools/conf/my_snippets")]
 endif
-
-
 
 
 "------------------------------------------------------
@@ -815,6 +820,7 @@ if index(g:bundle_group, 'tex') >= 0
 
 	" 打开pdf预览
 	map ,r :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline <C-r>=line('.')<CR> %<.pdf<CR>
+
 endif
 
 
@@ -835,20 +841,20 @@ let g:ycm_add_preview_to_completeopt = 0
 " 禁用诊断功能：我们用前面更好用的 ALE 代替
 let g:ycm_python_binary_path = ycm_python_binary 
 let g:ycm_server_python_interpreter = ycm_python_interpreter
-let g:ycm_global_ycm_extra_conf = "~/.vim/bundles/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
+let g:ycm_global_ycm_extra_conf = expand('~/.vim/vim-init/tools/conf/ycm_extra_conf.py')
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
 let g:ycm_min_num_identifier_candidate_chars = 2
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
+let g:ycm_key_invoke_completion = '<c-space>'
 set completeopt=menu,menuone
 
-noremap <c-z> <NOP>
+" noremap <c-z> <NOP>
 
 " 保留几个好用的跳转
 nnoremap <leader>gg :YcmCompleter GoTo<CR>
-"nnoremap <leader>gf :YcmCompleter FixIt<CR>
+nnoremap <leader>gf :YcmCompleter FixIt<CR>
 "nnoremap <leader>gi :YcmCompleter GoToInclude<CR>
 nnoremap <leader>gt :YcmCompleter GetType<CR>
 nnoremap <leader>gdc :YcmCompleter GetDoc<CR>
@@ -857,8 +863,14 @@ nnoremap <leader>gdc :YcmCompleter GetDoc<CR>
 let g:ycm_semantic_triggers =  {
 			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
 			\ 'cs,lua,javascript': ['re!\w{2}'],
+			\ 'tex': g:vimtex#re#youcompleteme,
 			\ }
 
+
+" YCM tex 补全
+" if !exists('g:ycm_semantic_triggers')
+" 	let g:ycm_semantic_triggers.tex = g:vimtex#re#youcompleteme
+" endif
 
 "----------------------------------------------------------------------
 " Ycm 白名单（非名单内文件不启用 YCM），避免打开个 1MB 的 txt 分析半天
@@ -881,6 +893,7 @@ let g:ycm_filetype_whitelist = {
 			\ "php":1,
 			\ "ruby":1,
 			\ "rust":1,
+			\ "tex":1,
 			\ "erlang":1,
 			\ "asm":1,
 			\ "nasm":1,

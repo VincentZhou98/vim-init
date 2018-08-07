@@ -50,6 +50,6 @@ LoadScript init/init-style.vim
 LoadScript init/init-keymaps.vim
 
 " 很多初始文件snippest
-LoadScript init/init-snippest.vim
+LoadScript init/init-snippets.vim
 
 
