@@ -403,6 +403,14 @@ if index(g:bundle_group, 'filetypes') >= 0
 
 	" Vasp相关
 	Plug 'alejandrogallo/vasp.vim'
+
+	" Julia相关
+	Plug 'JuliaEditorSupport/julia-vim'
+	let g:default_julia_version = '0.6'
+
+	" lammps 相关
+	au  BufNewFile,BufReadPost *.lmp so ~/.vim/vim-init/syntax/lammps.vim
+	au  BufNewFile,BufReadPost in.* so ~/.vim/vim-init/syntax/lammps.vim
 endif
 
 
@@ -576,7 +584,13 @@ let g:LanguageClient_serverCommands = {
     \ 'python': ['pyls'],
     \ 'c': ['cquery'],
     \ 'cpp': ['cquery'],
-    \ }
+	\ 'julia': ['julia', '--startup-file=no', '--history-file=no', '-e', '
+	\    using LanguageServer;
+	\    server = LanguageServer.LanguageServerInstance(STDIN, STDOUT, false);
+	\    server.runlinter = true;
+	\    run(server);
+	\'],
+\ }
 
 " Or map each action separately
 noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
@@ -929,6 +943,10 @@ let g:ycm_filetype_whitelist = {
 			\ "config":1,
 			\ "zimbu":1,
 			\ "ps1":1,
+			\ "julia":1,
+			\ "incar":1,
+			\ "poscar":1,
+			\ "lammps":1,
 			\ }
 
 

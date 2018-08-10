@@ -182,6 +182,9 @@ augroup InitFileTypesGroup
 	au BufNewFile,BufRead *.asc setlocal filetype=asciidoc
 	au BufNewFile,BufRead *.vl setlocal filetype=verilog
 	au BufNewFile,BufRead *.tex setlocal filetype=tex
+	au BufNewFile,BufRead *.jl setlocal filetype=julia
+	au BufNewFile,BufReadPost *.lmp setlocal filetype=lammps
+	au BufNewFile,BufReadPost in.* setlocal filetype=lammps
 
 augroup END
 
