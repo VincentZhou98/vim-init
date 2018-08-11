@@ -19,6 +19,7 @@ if !exists('g:bundle_group')
 	let g:bundle_group += ['leaderf']
 	let g:bundle_group += ['complete', 'python_doc', 'source_header', 'tex']
 	let g:bundle_group += ['markdown']
+	let g:bundle_group += ['deoplete']
 endif
 
 
@@ -568,6 +569,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
+
+
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
 if g:os == "Darwin"
@@ -599,6 +602,20 @@ noremap <leader>rh :call LanguageClient#textDocument_hover()<cr>
 nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 nnoremap <leader>rm :call LanguageClient_contextMenu()<CR>
 
+"----------------------------------------------------------------------
+" deoplete搭配LanguageClient使用
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'deoplete') >= 0
+	if has('nvim')
+	  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+	else
+	  Plug 'Shougo/deoplete.nvim'
+	  Plug 'roxma/nvim-yarp'
+	  Plug 'roxma/vim-hug-neovim-rpc'
+	endif
+	" Not auto start due to powerful YCM
+	" let g:deoplete#enable_at_startup = 1
+endif
 
 "----------------------------------------------------------------------
 " echodoc：搭配 YCM/deoplete 在底部显示函数参数
@@ -834,6 +851,10 @@ if index(g:bundle_group, 'tex') >= 0
 
 	" 打开pdf预览
 	map ,r :w<CR>:silent !/Applications/Skim.app/Contents/SharedSupport/displayline <C-r>=line('.')<CR> %<.pdf<CR>
+
+	if has('nvim')
+		let g:vimtex_compiler_progname = 'nvr'
+	endif
 
 endif
 
