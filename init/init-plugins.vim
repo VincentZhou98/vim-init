@@ -401,6 +401,13 @@ if index(g:bundle_group, 'filetypes') >= 0
 
 	" vim org-mode 
 	Plug 'jceb/vim-orgmode', { 'for': 'org' }
+	noremap glf @<Plug>OrgHyperlinkFollow 
+	" 这个remap永远不成功，不知道怎么搞
+	noremap <c-h> @<Plug>OrgNewHeadingBelowAfterChildrenNormal
+	let g:org_export_init_script=expand("~/.spacemacs")
+	let g:org_export_emacs="/usr/local/bin/emacs"
+	let g:org_agenda_files=['~/.org/index.org']
+ 
 
 	" Vasp相关
 	Plug 'alejandrogallo/vasp.vim'
@@ -425,7 +432,7 @@ if index(g:bundle_group, 'airline') >= 0
 	let g:airline_left_alt_sep = ''
 	let g:airline_right_sep = ''
 	let g:airline_right_alt_sep = ''
-	let g:airline_powerline_fonts = 0
+	" let g:airline_powerline_fonts = 0
 	let g:airline_exclude_preview = 1
 	let g:airline_section_b = '%n'
 	let g:airline_theme='deus'
@@ -545,6 +552,7 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'python': ['yapf', 'isort'],
 				\ 'cpp': ['clang-format'],
 				\ 'c': ['clang-format'],
+				\ 'sh': ['shfmt']
 				\}
 	let g:ale_cpp_clangformat_executable = clang_format_exec
 	let g:ale_c_clangformat_executable = clang_format_exec
@@ -858,6 +866,14 @@ if index(g:bundle_group, 'tex') >= 0
 
 endif
 
+
+"----------------------------------------------------------------------
+" vim tex写作
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'icons') >= 0
+	Plug 'ryanoasis/vim-devicons'
+	let g:airline_powerline_fonts = 1
+endif
 
 "----------------------------------------------------------------------
 " 结束插件安装

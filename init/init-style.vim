@@ -294,11 +294,11 @@ set guitabtooltip=%{Vim_NeatGuiTabTip()}
 
 if has('gui_running')
 	if g:os == "Darwin"
-		set guifont=Fira\ Code:h15
+		set guifont=FiraCode-Retina:h15
 		set macmeta
 		set macligatures
 	elseif g:os == "Linux"
-		set guifont=Fira\ Code\ 13
+		set guifont=FiraCode-Retina\ 13
 	endif
 endif
 
