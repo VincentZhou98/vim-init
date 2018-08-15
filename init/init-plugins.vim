@@ -405,7 +405,11 @@ if index(g:bundle_group, 'filetypes') >= 0
 	" 这个remap永远不成功，不知道怎么搞
 	noremap <c-h> @<Plug>OrgNewHeadingBelowAfterChildrenNormal
 	let g:org_export_init_script=expand("~/.spacemacs")
-	let g:org_export_emacs="/usr/local/bin/emacs"
+	if g:os == "Darwin"
+		let g:org_export_emacs="/usr/local/bin/emacs"
+	elseif g:os == "Linux"
+		let g:org_export_emacs="~/.linuxbrew/bin/emacs"
+	endif
 	let g:org_agenda_files=['~/.org/index.org']
  
 
