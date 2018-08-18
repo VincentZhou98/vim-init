@@ -37,3 +37,8 @@ augroup PythonTab
 augroup END
 
 
+augroup CppTab
+	au!
+    " Cpp tab
+	au FileType cpp,c setlocal shiftwidth=2 tabstop=2 softtabstop=2 expandtab
+augroup END
