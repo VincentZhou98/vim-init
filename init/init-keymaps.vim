@@ -342,6 +342,7 @@ endfunc
 " 下面进行 grep，这样能方便的对相关项目进行搜索
 "----------------------------------------------------------------------
 if executable('rg')
+    " 这个在mac下检测py项目时有问题，非常奇怪
 	noremap <silent><F2> :AsyncRun! -cwd=<root> rg -n --no-heading 
 				\ --color never -g '*.h' -g '*.c*' -g '*.py' -g '*.js' -g '*.vim'
 				\ <C-R><C-W> "<root>" <cr>

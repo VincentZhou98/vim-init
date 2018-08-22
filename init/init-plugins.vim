@@ -199,6 +199,9 @@ if index(g:bundle_group, 'enhanced') >= 0
     " 项目内的搜索替换
     Plug 'brooth/far.vim'
 
+    " 更多的% match跳转
+    Plug 'andymass/vim-matchup'
+
     " 使用 :CtrlSF 命令进行模仿 sublime 的 grep
     Plug 'dyng/ctrlsf.vim'
     " 一些命令
@@ -228,6 +231,7 @@ if index(g:bundle_group, 'enhanced') >= 0
 
     " 提供 gist 接口
     Plug 'lambdalisue/vim-gista', { 'on': 'Gista' }
+    let g:gista#client#default_username="VincentZhou98"
     
     " ALT_+/- 用于按分隔符扩大缩小 v 选区
     map <m-=> <Plug>(expand_region_expand)
@@ -306,6 +310,8 @@ if index(g:bundle_group, 'tags') >= 0
 
     " tag 展示
     Plug 'majutsushi/tagbar'
+    nmap <leader>t :TagbarToggle<CR>
+
 
     " 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
     " 支持光标移动到符号名上：<leader>cg 查看定义，<leader>cs 查看引用
