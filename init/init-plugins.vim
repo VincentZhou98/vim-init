@@ -402,6 +402,9 @@ if index(g:bundle_group, 'filetypes') >= 0
     " 额外语法文件
     Plug 'justinmk/vim-syntax-extra', { 'for': ['c', 'bison', 'flex', 'cpp'] }
     Plug 'sheerun/vim-polyglot'
+    " polyglot很容易产生奇怪的冲突，把相关的禁止
+    " 比如init-keymaps 里面的grep，非常奇怪
+    let g:polyglot_disabled = ['python', 'python-compiler', 'python-ident', "c++11"]
 
     " python 语法文件增强
     Plug 'vim-python/python-syntax', { 'for': ['python'] }
