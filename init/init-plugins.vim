@@ -202,6 +202,9 @@ if index(g:bundle_group, 'enhanced') >= 0
     " 更多的% match跳转
     Plug 'andymass/vim-matchup'
 
+    " Cheat Sheet
+    Plug 'dbeniamine/cheat.sh-vim'
+
     " 使用 :CtrlSF 命令进行模仿 sublime 的 grep
     Plug 'dyng/ctrlsf.vim'
     " 一些命令
@@ -951,6 +954,7 @@ let g:ycm_filetype_whitelist = {
             \ "python":1,
             \ "java":1,
             \ "javascript":1,
+            \ "javascript.jsx":1,
             \ "coffee":1,
             \ "vim":1, 
             \ "go":1,
@@ -1001,6 +1005,7 @@ let g:ycm_filetype_whitelist = {
             \ "incar":1,
             \ "poscar":1,
             \ "lammps":1,
+            \ "gnuplot":1
             \ }
 
 
