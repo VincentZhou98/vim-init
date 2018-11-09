@@ -231,6 +231,8 @@ if index(g:bundle_group, 'enhanced') >= 0
 
     " 配对括号和引号自动补全
     Plug 'Raimondi/delimitMate'
+    let delimitMate_expand_space = 1
+    let delimitMate_expand_cr = 1
 
     " 提供 gist 接口
     Plug 'lambdalisue/vim-gista', { 'on': 'Gista' }
@@ -407,7 +409,7 @@ if index(g:bundle_group, 'filetypes') >= 0
     Plug 'sheerun/vim-polyglot'
     " polyglot很容易产生奇怪的冲突，把相关的禁止
     " 比如init-keymaps 里面的grep，非常奇怪
-    let g:polyglot_disabled = ['python', 'python-compiler', 'python-ident', "c++11"]
+    let g:polyglot_disabled = ['python', 'python-compiler', 'python-ident', "c++11", 'latex']
 
     " python 语法文件增强
     Plug 'vim-python/python-syntax', { 'for': ['python'] }
@@ -417,7 +419,7 @@ if index(g:bundle_group, 'filetypes') >= 0
 
     " vim org-mode 
     Plug 'jceb/vim-orgmode', { 'for': 'org' }
-    noremap glf @<Plug>OrgHyperlinkFollow 
+    " noremap glf @<Plug>OrgHyperlinkFollow 
     " 这个remap永远不成功，不知道怎么搞
     noremap <c-h> @<Plug>OrgNewHeadingBelowAfterChildrenNormal
     let g:org_export_init_script=expand("~/.spacemacs")
@@ -434,7 +436,7 @@ if index(g:bundle_group, 'filetypes') >= 0
 
     " Julia相关
     Plug 'JuliaEditorSupport/julia-vim'
-    let g:default_julia_version = '0.6'
+    let g:default_julia_version = '1.0'
 
     " lammps 相关
     au  BufNewFile,BufReadPost *.lmp so ~/.vim/vim-init/syntax/lammps.vim
@@ -615,7 +617,7 @@ let g:LanguageClient_serverCommands = {
     \ 'python': ['pyls'],
     \ 'c': ['cquery'],
     \ 'cpp': ['cquery'],
-    \ 'julia': ['julia', '--startup-file=no', '--history-file=no', '-e', '
+    \ 'julia': ['/usr/local/bin/julia', '--startup-file=no', '--history-file=no', '-e', '
     \    using LanguageServer;
     \    server = LanguageServer.LanguageServerInstance(STDIN, STDOUT, false);
     \    server.runlinter = true;
